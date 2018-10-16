@@ -1,2 +1,5 @@
 # no ipynb checkpoints
 .ipynb_checkpoints/
+
+# has my OpenWeatherMapy API key
+weatherweatherlang.py 
