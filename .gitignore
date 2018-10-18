@@ -1,5 +1,8 @@
-# no ipynb checkpoints
+# no ipynb checkpoints for everything
 .ipynb_checkpoints/
 
+# for WeatherPy
 # has my OpenWeatherMapy API key
 weatherweatherlang.py 
+# don't need the large json file for OWM cityIDs
+city.list.json
