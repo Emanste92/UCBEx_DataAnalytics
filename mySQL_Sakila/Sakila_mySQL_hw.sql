@@ -32,7 +32,6 @@ add column `description` blob after last_name;
 -- 3b. Deleting the 'description' column that was just created
 alter table actor
 drop `description`;
-select * from actor;
 
 -- 4a. Listing actor last names and their frequencies in the database
 select last_name, count(*) as `frequencies`
@@ -124,7 +123,6 @@ order by c.last_name;
 
 -- 7a. Using subqueries to display movie titles starting with K and Q that are in English
 -- seeing how tables look like first
--- NEED TO DOUBLE CHECK DIS ONE
 -- select * from film;
 -- select * from `language`;
 
@@ -138,8 +136,7 @@ where ((title like 'K%') or
 		where name = 'English'
 	);
 
--- 7b. Use subqueries to display all actors who appear in the film Alone Trip.
--- DOUBLE CHECK
+-- 7b. Use subqueries to display all actors who appear in the film Alone Trip
 select first_name, last_name
 from actor
 where actor_id in (
@@ -158,17 +155,17 @@ where actor_id in (
 -- select * from address;
 -- select * from city;
 -- select * from country;
+-- select * from store;
 -- note: display code to see if the id joins match
 -- select c.last_name, c.first_name, c.email, c.address_id, a.district, a.city_id,
 -- ci.city_id, ci.country_id, co.country_id
 
--- DOUBLE check this, really only 5 output?
-
-select c.last_name, c.first_name, c.email
-from customer as c
-inner join address as a on c.address_id = a.address_id
-inner join city as ci on a.city_id = ci.city_id
-inner join country as co on ci.country_id = co.country_id
+select c.first_name, c.last_name, c.email
+from country as co
+inner join city as ci on ci.country_id = co.country_id
+inner join address as a on a.city_id = ci.city_id
+inner join store as st on st.address_id = a.address_id
+inner join customer as c on st.store_id = c.store_id
 where co.country = 'Canada'
 order by c.last_name;
 
@@ -189,13 +186,11 @@ order by f.title;
 
 -- 7e. Displaying the most frequently rented movies in descending order
 -- seeing how tables look like first
-select * from rental;
-select * from inventory;
-select * from film;
+-- select * from rental;
+-- select * from inventory;
+-- select * from film;
 -- note: display code to see if the id joins match
 -- select f.title, f.film_id, r.rental_id, r.inventory_id, i.inventory_id, i.film_id
-
--- DOUBLE CHECK
 
 select f.title, count(f.film_id) as 'times rented (descending)'
 from inventory as i
@@ -236,16 +231,14 @@ group by s.store_id;
 
 -- 7h. Listing the top five genres in gross revenue in descending order
 -- seeing how tables look like first
-select * from category;
-select * from film_category;
-select * from inventory;
-select * from payment;
-select * from rental;
+-- select * from category;
+-- select * from film_category;
+-- select * from inventory;
+-- select * from payment;
+-- select * from rental;
 -- note: display code to see if the id joins match
 -- select c.`name`, c.category_id, fc.category_id, fc.film_id, r.rental_id, r.inventory_id, 
 -- i.inventory_id, i.film_id, p.rental_id, sum(p.amount)
-
--- DOUBLE CHECK
 
 select c.`name`, sum(p.amount) as 'gross revenue'
 from category as c
