@@ -2,12 +2,12 @@
 
 # 1. Loading packages 
 import numpy as np
+import datetime as dt
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
 from flask import Flask, jsonify
-
 
 # 2. Setting up sqlite session and Flask
 engine = create_engine("sqlite:///Resources/hawaii.sqlite")
@@ -131,8 +131,6 @@ def calc_temps_start(start_date):
         return session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).\
             filter(Measurement.date >= start_date).all()
     return jsonify({"error": "Incorrect year-month-day format. Did you remember to include the 0's for months and days?"}), 404
-
-
 
 # Start/End Temperature Data
 @app.route("/api/v1.0/<start>/<end>")
