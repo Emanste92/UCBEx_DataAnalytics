@@ -120,10 +120,7 @@ def tobs():
 # Start Temperature Data: tmin, tmax, tavg for dates greater than and equal to start date
 @app.route("/api/v1.0/<start>")
 
-
-# need a bit of help on this, stuck on how to approach it, what happens first
-# am I querying after getting the start date?
-# and how do I jsonify the output
+# need to make a dictionary 
 
 def calc_temps_start(start_date):
     print("Server received request for 'Start Temperatures' page...")
