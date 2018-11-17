@@ -111,6 +111,8 @@ def tobs():
     print("Server received request for 'tobs' page...")
     return jsonify(tobs_year)
 
+# These result in programming errors. not sure how to address. 
+
 # Start Temperature Data: tmin, tmax, tavg for dates greater than and equal to start date
 @app.route("/api/v1.0/<start>")
 def start(start):
