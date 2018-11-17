@@ -120,10 +120,15 @@ def start(start):
     start_date = dt.datetime.strptime(start, '%Y-%m-%d')
     # <start> route: tmin, tmax, tavg for dates greater than and equal to the start date input
     # created by running specific queries of the user-provided start date
-    tmin_start = session.query(func.min(Measurement.tobs)).filter(Measurement.date >= start_date).scalar()
-    tmax_start = session.query(func.max(Measurement.tobs)).filter(Measurement.date >= start_date).scalar()
-    tavg_start = session.query(func.round(func.avg(Measurement.tobs))).filter(Measurement.date >= start_date).scalar()
-    result = [{"tmin":tmin_start},{"tmax":tmax_start},{"tavg":tavg_start}]
+    results = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).\
+    filter(Measurement.date >= start_date).group_by(Measurement.date).all()
+    start_list = []
+    for result in results:
+        start_dict = {}
+        start_dict['tmin'] = result[0]
+        start_dict['tmax'] = result[1]
+        start_dict['tavg'] = result[2]
+        start_list.append(start_dict)
     return jsonify(result)
 
 # Start/End Temperature Data
@@ -134,10 +139,15 @@ def startend(start, end):
     end_date = dt.datetime.strptime(end, '%Y-%m-%d')
     # <start>/<end> route: tmin, tmax, tavg for dates between start and end date inclusive
     # created by running specific queries of the user-provided start date and end date  
-    tmin_period = session.query(func.min(Measurement.tobs)).filter(Measurement.date.between(start_date, end_date)).scalar()
-    tmax_period = session.query(func.max(Measurement.tobs)).filter(Measurement.date.between(start_date, end_date)).scalar()
-    tavg_period = session.query(func.round(func.avg(Measurement.tobs))).filter(Measurement.date.between(start_date, end_date)).scalar()
-    result = [{"tmin":tmin_period},{"tmax":tmax_period},{"tavg":tavg_period}]
+    results = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).\
+    filter(Measurement.date.between(start_date, end_date)).group_by(Measurement.date).all()
+    start_end_list = []
+    for result in results:
+        start_end_dict = {}
+        start_end_dict['tmin'] = result[0]
+        start_end_dict['tmax'] = result[1]
+        start_end_dict['tavg'] = result[2]
+        start_end_list.append(start_end_dict)
     return jsonify(result)
 
 if __name__ == '__main__':
