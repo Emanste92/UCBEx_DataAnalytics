@@ -63,12 +63,6 @@ for tob in tobs_query:
     tobs_dict['station_id'] = tob.station
     tobs_year.append(tobs_dict)
 
-
-# <start>/<end> route: tmin, tmax, tavg for dates between stard and end date inclusive
-def calc_temps_start_end(start_date, end_date):
-    return session.query(func.min(Measurement.tobs), func.max(Measurement.tobs),func.avg(Measurement.tobs)).\
-        filter(Measurement.date.bewteen(start_date,end_date)).all()
-
 # 4. Flask routes
 
 # Home
@@ -119,25 +113,30 @@ def tobs():
 
 # Start Temperature Data: tmin, tmax, tavg for dates greater than and equal to start date
 @app.route("/api/v1.0/<start>")
-
-# need to make a dictionary 
-
-def calc_temps_start(start_date):
+def start(start):
     print("Server received request for 'Start Temperatures' page...")
-    if start_date == Measurement.date:
-        return session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).\
-            filter(Measurement.date >= start_date).all()
-    return jsonify({"error": "Incorrect year-month-day format. Did you remember to include the 0's for months and days?"}), 404
+    start_date = dt.datetime.strptime(start, '%Y-%m-%d')
+    # <start> route: tmin, tmax, tavg for dates greater than and equal to the start date input
+    # created by running specific queries of the user-provided start date
+    tmin_start = session.query(func.min(Measurement.tobs)).filter(Measurement.date >= start_date).scalar()
+    tmax_start = session.query(func.max(Measurement.tobs)).filter(Measurement.date >= start_date).scalar()
+    tavg_start = session.query(func.round(func.avg(Measurement.tobs))).filter(Measurement.date >= start_date).scalar()
+    result = [{"tmin":tmin_start},{"tmax":tmax_start},{"tavg":tavg_start}]
+    return jsonify(result)
 
 # Start/End Temperature Data
 @app.route("/api/v1.0/<start>/<end>")
-def start_end_temps():
+def startend(start, end):
     print("Server received request for 'Start End Temperatures' page...")
-
-    return jsonify({"error": "Incorrect year-month-day format. Did you remember to include the 0's for months and days?"}), 404
-
-
-
+    start_date = dt.datetime.strptime(start, '%Y-%m-%d')
+    end_date = dt.datetime.strptime(end, '%Y-%m-%d')
+    # <start>/<end> route: tmin, tmax, tavg for dates between start and end date inclusive
+    # created by running specific queries of the user-provided start date and end date  
+    tmin_period = session.query(func.min(Measurement.tobs)).filter(Measurement.date.between(start_date, end_date)).scalar()
+    tmax_period = session.query(func.max(Measurement.tobs)).filter(Measurement.date.between(start_date, end_date)).scalar()
+    tavg_period = session.query(func.round(func.avg(Measurement.tobs))).filter(Measurement.date.between(start_date, end_date)).scalar()
+    result = [{"tmin":tmin_period},{"tmax":tmax_period},{"tavg":tavg_period}]
+    return jsonify(result)
 
 if __name__ == '__main__':
     app.run(debug=True)
